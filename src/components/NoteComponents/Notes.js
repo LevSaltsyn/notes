@@ -8,18 +8,11 @@ function Notes() {
   //states
   const [notes, setNotes] = useState([]);
   const [inputText, setInputText] = useState("");
-  const [inputEditText, setInputEditText] = useState("");
-
-  const [isEdited, setEditNode] = useState(false);
+  // const [inputEditText, setInputEditText] = useState("");
 
   // get text and store in state
   const textHandler = (e) => {
-    if (isEdited) {
-      setInputEditText(e.target.value);
-      console.log(inputEditText);
-    } else {
-      setInputText(e.target.value);
-    }
+    setInputText(e.target.value);
   };
 
   // add new note to the state array
@@ -35,17 +28,10 @@ function Notes() {
     setInputText("");
   };
 
-  //edit note function
-  const editNote = (id, text) => {
-    setInputEditText(text);
-    setEditNode(true);
-  };
-
   //delete note function
   const deleteNote = (id) => {
     const filteredNotes = notes.filter((note) => note.id !== id);
     setNotes(filteredNotes);
-    setEditNode(false);
   };
 
   //apply the save and get functions using useEffect
@@ -66,16 +52,15 @@ function Notes() {
 
   return (
     <div className="notes">
-      {notes.map((note) => (
+      {notes.map((note, index) => (
         <Note
+          notes={notes}
+          index={index}
           key={note.id}
           id={note.id}
           text={note.text}
-          inputEditText={inputEditText}
           textHandler={textHandler}
           deleteNote={deleteNote}
-          editNote={editNote}
-          isEdited={isEdited}
         />
       ))}
       <CreateNote
