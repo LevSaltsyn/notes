@@ -16,9 +16,14 @@
   color: #fff;
 }
 svg {
-    cursor: pointer;
+  cursor: pointer;
+  color: #fff;
 }
 
+.hashtag {
+  color: rgb(0, 149, 255);
+  cursor: pointer;
+}
 .note__header {
   display: flex;
   align-items: center;

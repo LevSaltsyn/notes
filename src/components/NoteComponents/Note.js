@@ -1,54 +1,60 @@
-import { useState } from "react";
-
+import { useState, useRef, useEffect } from "react";
+import HashtagInput from "./HashtagInput";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from "@mui/icons-material/Done";
 
-function Note({ id, text, index, deleteNote, notes }) {
+function Note({ id, noteText, index, deleteNote, notes, setFilteredNotes }) {
   const [isEdited, setEditNode] = useState(false);
-  const [inputEditText, setInputEditText] = useState(text);
+  const hashtagInputRef = useRef(null);
+  const notesRef = useRef(null);
+
+  useEffect(() => {
+    getAllTags();
+  }, []);
+
+  const searchForeTag = (e) => {
+    const myTag = e.target.innerText;
+
+    const filteredByTags = notes.filter((note) => {
+      return note.text.includes(myTag);
+    });
+
+    setFilteredNotes(filteredByTags);
+  };
+
+  const getAllTags = () => {
+    const spans = notesRef.current.querySelectorAll("span.hashtag");
+    spans.forEach((el) => (el.onclick = (e) => searchForeTag(e)));
+  };
 
   //edit note function
-  const editNote = (id, text) => {
+  const editNote = () => {
     setEditNode(true);
-    document.getElementById("mytextarea").focus();
-    // setInputEditText(text);
   };
 
-  // get text and store in state
-  const textEditHandler = (e) => {
-    setInputEditText(e.target.value);
-  };
-
+  // save note edits
   const saveEdits = () => {
     const noteEdit = notes[index];
-    noteEdit.text = inputEditText;
+    noteEdit.text = hashtagInputRef.current.innerText;
     setEditNode(false);
+    getAllTags();
   };
 
   return (
-    <div className="note">
-      {!isEdited ? (
-        <div>{inputEditText}</div>
-      ) : (
-        <textarea
-          id="mytextarea"
-          cols="10"
-          rows="5"
-          value={inputEditText}
-          onChange={textEditHandler}
-          maxLength="100"
-          autoFocus
-          readOnly={!isEdited}
-        ></textarea>
-      )}
+    <div className="note" ref={notesRef}>
+      <HashtagInput
+        isEdited={isEdited}
+        noteText={noteText}
+        hashtagInputRef={hashtagInputRef}
+      />
 
       <div className="note__footer" style={{ justifyContent: "flex-end" }}>
         {isEdited ? (
           <DoneIcon onClick={() => saveEdits()} />
         ) : (
           <EditIcon
-            onClick={() => editNote(id, text)}
+            onClick={() => editNote()}
             className="note__delete"
             aria-hidden="true"
           />
